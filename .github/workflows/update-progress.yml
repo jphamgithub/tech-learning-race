@@ -28,12 +28,14 @@ jobs:
 
           # Check if the month entry already exists
           if ! echo "$LEADERBOARD" | grep -q "$MONTH"; then
-            NEW_ENTRY="| $MONTH | $COMMITTER |"
+            NEW_ENTRY="| $MONTH | $COMMITTER (1) |"
             UPDATED_LEADERBOARD="$LEADERBOARD\n$NEW_ENTRY"
-          elif ! echo "$LEADERBOARD" | grep -q "$COMMITTER"; then
-            UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | sed "/$MONTH/ s/$/ $COMMITTER,/")
+          elif echo "$LEADERBOARD" | grep -q "$MONTH.*$COMMITTER"; then
+            # Increment count for repeated submissions
+            UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | sed -E "s/($MONTH.*$COMMITTER) \(([0-9]+)\)/\1 (\$((\2+1)))/")
           else
-            UPDATED_LEADERBOARD="$LEADERBOARD"
+            # Add new submission for the month
+            UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | sed "/$MONTH/ s/$/ $COMMITTER (1),/")
           fi
 
           # Replace the leaderboard in README
@@ -42,10 +44,15 @@ jobs:
             /<!-- LEADERBOARD_END -->/ {skip=0}
             !skip' $README_FILE > temp.md && mv temp.md $README_FILE
 
-      - name: Commit and Push Changes
+      - name: Commit, Pull, and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Pull latest changes to prevent conflicts
+          git pull origin main --rebase
+          
+          # Add, commit, and push the leaderboard update
           git add README.md
-          git commit -m "Automated leaderboard update for $COMMITTER in $MONTH"
-          git push
+          git commit -m "Automated leaderboard update for $COMMITTER in $MONTH" || echo "No changes to commit"
+          git push origin main
