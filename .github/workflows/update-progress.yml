@@ -38,7 +38,7 @@ jobs:
 
           # Replace the leaderboard in README
           awk -v new_leaderboard="$UPDATED_LEADERBOARD" '
-            /<!-- LEADERBOARD_START -->/ {print; print new_leaderboard; skip=1; next}
+            /<!-- LEADERBOARD_START -->/ {print; print new_leaderboard; skip=1; next}g
             /<!-- LEADERBOARD_END -->/ {skip=0}
             !skip' $README_FILE > temp.md && mv temp.md $README_FILE
 
