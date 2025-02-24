@@ -53,13 +53,19 @@ jobs:
             /<!-- LEADERBOARD_END -->/ {skip=0}
             !skip' $README_FILE > temp.md && mv temp.md $README_FILE
 
-      - name: Commit, Pull, and Push Changes
+      - name: Commit, Stash, Pull, and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Pull latest changes to prevent conflicts
+          # Stash any local changes before pulling
+          git stash
+
+          # Pull the latest changes from the repository
           git pull origin main --rebase
+
+          # Apply stashed changes back
+          git stash pop || echo "No changes to apply"
 
           # Add, commit, and push the leaderboard update
           git add README.md
