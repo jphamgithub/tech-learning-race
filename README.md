@@ -29,3 +29,15 @@ tech-learning-race repo:
 ├── .gitignore                # Files and folders to exclude from version control
 ├── progress-tracker.md       # Tracks who submitted work each month, maybe figure out a way to automate this based on who pushes to repo
 ```
+
+---
+
+## 🏆 Leaderboard
+
+The leaderboard automatically updates based on submissions pushed to the repository.
+
+<!-- LEADERBOARD_START -->
+| Month   | Submissions           |
+|---------|-----------------------|
+| 2025-03 |                       |
+<!-- LEADERBOARD_END -->
