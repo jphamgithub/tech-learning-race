@@ -31,10 +31,19 @@ jobs:
             NEW_ENTRY="| $MONTH | $COMMITTER (1) |"
             UPDATED_LEADERBOARD="$LEADERBOARD\n$NEW_ENTRY"
           elif echo "$LEADERBOARD" | grep -q "$MONTH.*$COMMITTER"; then
-            # Increment count for repeated submissions
-            UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | sed -E "s/($MONTH.*$COMMITTER) \(([0-9]+)\)/\1 (\$((\2+1)))/")
+            # Increment submission count using awk
+            UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | awk -v month="$MONTH" -v committer="$COMMITTER" '
+              $0 ~ month && $0 ~ committer {
+                match($0, committer " \\(([0-9]+)\\)", m)
+                if (m[1] != "") {
+                  count = m[1] + 1
+                  sub(committer " \\(" m[1] "\\)", committer " (" count ")", $0)
+                }
+              }
+              {print}
+            ')
           else
-            # Add new submission for the month
+            # Add a new submission entry for the committer in the same month
             UPDATED_LEADERBOARD=$(echo "$LEADERBOARD" | sed "/$MONTH/ s/$/ $COMMITTER (1),/")
           fi
 
@@ -48,10 +57,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Pull latest changes to prevent conflicts
           git pull origin main --rebase
-          
+
           # Add, commit, and push the leaderboard update
           git add README.md
           git commit -m "Automated leaderboard update for $COMMITTER in $MONTH" || echo "No changes to commit"
