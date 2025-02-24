@@ -34,7 +34,7 @@ tech-learning-race repo:
 
 ## 🏆 Leaderboard
 
-The leaderboard automatically updates based on submissions pushed to the repository.
+The leaderboard automatically updates based on submissions pushed to the repository (You must make a change to monthly_submissions/ ). Quality isn't checked so that is up to you!
 
 <!-- LEADERBOARD_START -->
 | Month   | Submissions           |
