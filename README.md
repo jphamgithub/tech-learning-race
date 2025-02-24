@@ -40,4 +40,5 @@ The leaderboard automatically updates based on submissions pushed to the reposit
 | Month   | Submissions           |
 |---------|-----------------------|
 | 2025-03 |                       |
+| 2025-02 | Jacob Pham |
 <!-- LEADERBOARD_END -->
